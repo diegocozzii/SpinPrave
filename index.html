@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SpinPrave Live Pro</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="rotate-screen">
+        <div class="rotate-box">
+            <div class="rotate-icon">🔄</div>
+            <p>Ruota il dispositivo in orizzontale per giocare a SpinPrave Live.</p>
+        </div>
+    </div>
+
+    <div class="game-wrapper">
+        <header class="top-bar">
+            <div class="brand-name">SPINPRAVE <small>LIVE</small></div>
+            <div id="msg-container"><span id="msg">FAI IL TUO GIOCO</span></div>
+        </header>
+
+        <main class="main-content">
+            <div class="wheel-section">
+                <canvas id="wheelCanvas" width="350" height="350"></canvas>
+            </div>
+
+            <div class="table-section">
+                <div class="board-container">
+                    <div class="board-live">
+                        <div class="zero bet-spot" data-type="plein" data-val="0" id="cell-0">0</div>
+                        <div class="grid-numbers" id="grid"></div>
+                        <div class="column-bets">
+                            <div class="col bet-spot" data-type="col" data-val="3" id="cell-col-3">2:1</div>
+                            <div class="col bet-spot" data-type="col" data-val="2" id="cell-col-2">2:1</div>
+                            <div class="col bet-spot" data-type="col" data-val="1" id="cell-col-1">2:1</div>
+                        </div>
+                        <div class="dozen-bets">
+                            <div class="doz bet-spot" data-type="dozen" data-val="1st">1st 12</div>
+                            <div class="doz bet-spot" data-type="dozen" data-val="2nd">2nd 12</div>
+                            <div class="doz bet-spot" data-type="dozen" data-val="3rd">3rd 12</div>
+                        </div>
+                        <div class="chance-bets">
+                            <div class="chn bet-spot" data-type="range" data-val="1-18">1-18</div>
+                            <div class="chn bet-spot" data-type="even-odd" data-val="even">EVEN</div>
+                            <div class="chn bet-spot red" data-type="color" data-val="red"><div class="diamond"></div></div>
+                            <div class="chn bet-spot black" data-type="color" data-val="black"><div class="diamond"></div></div>
+                            <div class="chn bet-spot" data-type="even-odd" data-val="odd">ODD</div>
+                            <div class="chn bet-spot" data-type="range" data-val="19-36">19-36</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="bottom-bar">
+            <div class="footer-left">
+                <div class="stat-boxes">
+                    <div class="stat-box saldo">
+                        SALDO: <span id="balance">1000</span> PC
+                    </div>
+                    <div class="stat-box puntata">
+                        PUNTATA: <span id="current-total-bet">0</span> PC
+                    </div>
+                </div>
+                <button id="refill-btn" class="btn-refill" onclick="refillBalance()">+ 1000 PC</button>
+            </div>
+
+            <div class="chips-selector">
+                <div class="chip-item c1 active" data-val="1">1</div>
+                <div class="chip-item c5" data-val="5">5</div>
+                <div class="chip-item c10" data-val="10">10</div>
+                <div class="chip-item c25" data-val="25">25</div>
+                <div class="chip-item c50" data-val="50">50</div>
+                <div class="chip-item c100" data-val="100">100</div>
+            </div>
+
+            <div class="buttons-area">
+                <button class="btn-alt" onclick="manualReset()">ANNULLA</button>
+                <button class="btn-main" id="spin-btn" onclick="spinBall()">GIRA</button>
+            </div>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
