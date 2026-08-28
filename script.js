@@ -83,7 +83,7 @@ function startBettingTimer() {
         if (bettingTimeLeft <= 0) {
             clearInterval(timerInterval);
             timerBoxEl.classList.remove('timer-pulse');
-            spinBall(); // Gira sempre, a prescindere dalle puntate
+            spinBall();
         }
     }, 1000);
 }
@@ -131,7 +131,9 @@ function drawWheel() {
     ctx.fill();
     ctx.beginPath();
     ctx.fillStyle = "#ffcc00";
-    ctx.moveTo(center - 15, 0); ctx.lineTo(center + 15, 0); ctx.lineTo(center, 25);
+    ctx.moveTo(center - 15, 0);
+    ctx.lineTo(center + 15, 0);
+    ctx.lineTo(center, 25);
     ctx.fill();
 }
 
@@ -231,7 +233,6 @@ function resolve(winNum) {
             msgEl.className = "msg-loss";
         }
     } else {
-        // Giro a vuoto senza puntate
         msgEl.innerText = `USCITO IL ${winNum} - NESSUNA PUNTATA`;
         msgEl.className = "";
     }
@@ -256,18 +257,18 @@ function updateUI() {
     refillBtn.style.display = (balance <= 0 && total <= 0) ? "block" : "none";
 }
 
-function refillBalance() { 
-    balance = 1000; 
-    updateUI(); 
-    msgEl.innerText = "RICARICATO!"; 
-    msgEl.className = ""; 
+function refillBalance() {
+    balance = 1000;
+    updateUI();
+    msgEl.innerText = "RICARICATO!";
+    msgEl.className = "";
 }
 
 function manualReset() {
     if (isSpinning) return;
     for (let id in bets) balance += bets[id].amount;
-    bets = {}; 
-    updateChips(); 
+    bets = {};
+    updateChips();
     updateUI();
 }
 
