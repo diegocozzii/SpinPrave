@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SpinPrave</title>
+    <title>SpinPrave Live Pro</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="apple-touch-icon" href="favicon.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -18,8 +17,15 @@
 
     <div class="game-wrapper">
         <header class="top-bar">
-            <div class="brand-name">SPINPRAVE <small>LIVE</small></div>
+            <div class="top-left">
+                <div class="brand-name">SPINPRAVE <small>LIVE</small></div>
+                <div class="timer-box">TEMPO: <span id="timer-val">15</span>s</div>
+            </div>
             <div id="msg-container"><span id="msg">FAI IL TUO GIOCO</span></div>
+            <div class="history-container">
+                <span class="history-label">ULTIMI:</span>
+                <div id="history-list" class="history-list"></div>
+            </div>
         </header>
 
         <main class="main-content">
@@ -58,16 +64,11 @@
         <footer class="bottom-bar">
             <div class="footer-left">
                 <div class="stat-boxes">
-                    <div class="stat-box saldo">
-                        SALDO: <span id="balance">1000</span> PC
-                    </div>
-                    <div class="stat-box puntata">
-                        PUNTATA: <span id="current-total-bet">0</span> PC
-                    </div>
+                    <div class="stat-box saldo">SALDO: <span id="balance">1000</span> PC</div>
+                    <div class="stat-box puntata">PUNTATA: <span id="current-total-bet">0</span> PC</div>
                 </div>
                 <button id="refill-btn" class="btn-refill" onclick="refillBalance()">+ 1000 PC</button>
             </div>
-
             <div class="chips-selector">
                 <div class="chip-item c1 active" data-val="1">1</div>
                 <div class="chip-item c5" data-val="5">5</div>
@@ -76,10 +77,9 @@
                 <div class="chip-item c50" data-val="50">50</div>
                 <div class="chip-item c100" data-val="100">100</div>
             </div>
-
             <div class="buttons-area">
                 <button class="btn-alt" onclick="manualReset()">ANNULLA</button>
-                <button class="btn-main" id="spin-btn" onclick="spinBall()">GIRA</button>
+                <button class="btn-main" id="spin-btn" onclick="triggerManualSpin()">GIRA</button>
             </div>
         </footer>
     </div>

@@ -10,12 +10,19 @@ let ballVisible = false;
 let ballAngle = 0;
 let ballRadius = 135;
 
+// Timer e Cronologia
+let bettingTimeLeft = 15;
+let timerInterval = null;
+const history = [];
+
 const canvas = document.getElementById('wheelCanvas');
 const ctx = canvas.getContext('2d');
 const msgEl = document.getElementById('msg');
+const timerValEl = document.getElementById('timer-val');
+const timerBoxEl = document.querySelector('.timer-box');
 const refillBtn = document.getElementById('refill-btn');
+const historyListEl = document.getElementById('history-list');
 
-// Chip Selector - Usiamo 'click' standard per mobile
 document.querySelectorAll('.chip-item').forEach(c => {
     c.addEventListener('click', () => {
         if (isSpinning) return;
@@ -41,9 +48,8 @@ function init() {
         }
     }
 
-    // Usiamo 'click' standard per mobile
     document.querySelectorAll('.bet-spot').forEach(spot => {
-        spot.addEventListener('click', (e) => {
+        spot.addEventListener('click', () => {
             if (isSpinning || balance < selectedValue) return;
             balance -= selectedValue;
             const id = spot.id || `out-${spot.dataset.type}-${spot.dataset.val}`;
@@ -54,7 +60,39 @@ function init() {
             updateUI();
         });
     });
+
     render(0);
+    startBettingTimer();
+}
+
+function startBettingTimer() {
+    clearInterval(timerInterval);
+    bettingTimeLeft = 15;
+    timerValEl.innerText = bettingTimeLeft;
+    timerBoxEl.classList.remove('timer-pulse');
+
+    timerInterval = setInterval(() => {
+        if (isSpinning) return;
+        bettingTimeLeft--;
+        timerValEl.innerText = bettingTimeLeft;
+
+        if (bettingTimeLeft <= 5) {
+            timerBoxEl.classList.add('timer-pulse');
+        }
+
+        if (bettingTimeLeft <= 0) {
+            clearInterval(timerInterval);
+            timerBoxEl.classList.remove('timer-pulse');
+            spinBall(); // Gira sempre, a prescindere dalle puntate
+        }
+    }, 1000);
+}
+
+function triggerManualSpin() {
+    if (isSpinning) return;
+    clearInterval(timerInterval);
+    timerBoxEl.classList.remove('timer-pulse');
+    spinBall();
 }
 
 function updateChips() {
@@ -70,9 +108,8 @@ function updateChips() {
 }
 
 function drawWheel() {
-    const size = 350, center = 175, slice = (Math.PI * 2) / 37;
-    ctx.clearRect(0, 0, size, size);
-
+    const center = 175, slice = (Math.PI * 2) / 37;
+    ctx.clearRect(0, 0, 350, 350);
     for (let i = 0; i < 37; i++) {
         const theta = (i * slice) - (Math.PI / 2);
         ctx.beginPath();
@@ -80,55 +117,45 @@ function drawWheel() {
         ctx.moveTo(center, center);
         ctx.arc(center, center, center - 10, theta, theta + slice);
         ctx.fill();
-        ctx.strokeStyle = "rgba(255,255,255,0.1)";
-        ctx.stroke();
-
         ctx.save();
         ctx.translate(center, center);
         ctx.rotate(theta + slice / 2);
         ctx.fillStyle = "white";
-        ctx.font = "bold 13px Arial";
-        ctx.fillText(wheelOrder[i], center - 40, 5);
+        ctx.font = "bold 15px Arial";
+        ctx.fillText(wheelOrder[i], center - 42, 5);
         ctx.restore();
     }
-
     ctx.beginPath();
     ctx.fillStyle = "#222";
     ctx.arc(center, center, center - 60, 0, Math.PI * 2);
     ctx.fill();
-
     ctx.beginPath();
     ctx.fillStyle = "#ffcc00";
-    ctx.moveTo(center - 15, 0);
-    ctx.lineTo(center + 15, 0);
-    ctx.lineTo(center, 25);
+    ctx.moveTo(center - 15, 0); ctx.lineTo(center + 15, 0); ctx.lineTo(center, 25);
     ctx.fill();
-}
-
-function renderBall(angleBall) {
-    const center = 175;
-    const bx = center + ballRadius * Math.cos(angleBall - (Math.PI / 2));
-    const by = center + ballRadius * Math.sin(angleBall - (Math.PI / 2));
-    ctx.beginPath();
-    ctx.fillStyle = "white";
-    ctx.arc(bx, by, 6, 0, Math.PI * 2);
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = "white";
-    ctx.fill();
-    ctx.shadowBlur = 0;
 }
 
 function render(angleBall) {
     drawWheel();
-    if (ballVisible) renderBall(angleBall);
+    if (ballVisible) {
+        const center = 175;
+        const bx = center + ballRadius * Math.cos(angleBall - (Math.PI / 2));
+        const by = center + ballRadius * Math.sin(angleBall - (Math.PI / 2));
+        ctx.beginPath();
+        ctx.fillStyle = "#0d00ff";
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = "#0d00ff";
+        ctx.arc(bx, by, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
 }
 
 function spinBall() {
-    if (isSpinning || Object.keys(bets).length === 0) return;
     isSpinning = true;
     ballVisible = true;
     document.getElementById('spin-btn').disabled = true;
-    msgEl.innerText = "NON SI ACCETTANO PUNTATE...";
+    msgEl.innerText = "GIOCHI CHIUSI...";
     msgEl.className = "";
 
     const winIdx = Math.floor(Math.random() * 37);
@@ -155,9 +182,24 @@ function spinBall() {
     requestAnimationFrame(animate);
 }
 
+function updateHistory(winNum) {
+    history.unshift(winNum);
+    if (history.length > 5) history.pop();
+    historyListEl.innerHTML = '';
+    history.forEach(num => {
+        const badge = document.createElement('div');
+        const colorClass = num === 0 ? 'green' : (reds.includes(num) ? 'red' : 'black');
+        badge.className = `history-badge ${colorClass}`;
+        badge.innerText = num;
+        historyListEl.appendChild(badge);
+    });
+}
+
 function resolve(winNum) {
     let winTotal = 0;
     let totalBetOnTable = 0;
+    const hadBets = Object.keys(bets).length > 0;
+
     for (let id in bets) {
         const b = bets[id];
         totalBetOnTable += b.amount;
@@ -176,20 +218,33 @@ function resolve(winNum) {
         }
         if (win) winTotal += (b.amount * mult) + b.amount;
     }
+
     balance += winTotal;
-    if (winTotal > 0) {
-        msgEl.innerText = `USCITO IL ${winNum} - HAI VINTO ${winTotal} PC!`;
-        msgEl.className = "msg-win";
+    updateHistory(winNum);
+
+    if (hadBets) {
+        if (winTotal > 0) {
+            msgEl.innerText = `USCITO IL ${winNum} - HAI VINTO ${winTotal} PC!`;
+            msgEl.className = "msg-win";
+        } else {
+            msgEl.innerText = `USCITO IL ${winNum} - HAI PERSO ${totalBetOnTable} PC`;
+            msgEl.className = "msg-loss";
+        }
     } else {
-        msgEl.innerText = `USCITO IL ${winNum} - HAI PERSO ${totalBetOnTable} PC`;
-        msgEl.className = "msg-loss";
+        // Giro a vuoto senza puntate
+        msgEl.innerText = `USCITO IL ${winNum} - NESSUNA PUNTATA`;
+        msgEl.className = "";
     }
+
     bets = {};
     setTimeout(() => {
         updateChips();
         updateUI();
         ballVisible = false;
         render(0);
+        msgEl.innerText = "FAI IL TUO GIOCO";
+        msgEl.className = "";
+        startBettingTimer();
     }, 3000);
 }
 
@@ -201,15 +256,19 @@ function updateUI() {
     refillBtn.style.display = (balance <= 0 && total <= 0) ? "block" : "none";
 }
 
-function refillBalance() { balance = 1000; updateUI(); msgEl.innerText = "RICARICATO!"; msgEl.className = ""; }
+function refillBalance() { 
+    balance = 1000; 
+    updateUI(); 
+    msgEl.innerText = "RICARICATO!"; 
+    msgEl.className = ""; 
+}
+
 function manualReset() {
     if (isSpinning) return;
     for (let id in bets) balance += bets[id].amount;
-    bets = {};
-    updateChips();
+    bets = {}; 
+    updateChips(); 
     updateUI();
-    msgEl.innerText = "FAI IL TUO GIOCO";
-    msgEl.className = "";
 }
 
 init();
