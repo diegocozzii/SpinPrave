@@ -3,102 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SpinPrave Live Pro</title>
-
-    <!-- FAVICON STANDARD -->
+    <title>SpinPrave Casino Suite</title>
     <link rel="icon" type="image/png" href="favicon.png">
-
-    <!-- SUPPORTO IPHONE / IPAD (Segnalibri e Schermata Home) -->
     <link rel="apple-touch-icon" href="favicon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
-    
-    <!-- Configurazione Web App iOS a schermo intero -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SpinPrave">
-
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Schermata Blocco Rotazione (Visibile in Portrait su mobile) -->
-    <div id="rotate-screen">
-        <div class="rotate-box">
-            <div class="rotate-icon">🔄</div>
-            <p>Ruota il dispositivo in orizzontale per giocare a SpinPrave Live.</p>
-        </div>
-    </div>
-
-    <!-- Contenitore Gioco Principale -->
-    <div class="game-wrapper">
-        <header class="top-bar">
-            <div class="top-left">
-                <div class="brand-name">SPINPRAVE <small>LIVE</small></div>
-                <div class="timer-box">TEMPO: <span id="timer-val">15</span>s</div>
+    <div class="lobby-wrapper">
+        <header class="lobby-header">
+            <div class="brand">
+                <h1>SPINPRAVE <small>CASINO</small></h1>
+                <p class="tagline">LIVE LUXURY GAMING</p>
             </div>
-            <div id="msg-container"><span id="msg">FAI IL TUO GIOCO</span></div>
-            <div class="history-container">
-                <span class="history-label">ULTIMI:</span>
-                <div id="history-list" class="history-list"></div>
+            <div class="balance-card">
+                <span class="label">SALDO DISPONIBILE</span>
+                <div class="val"><span id="lobby-balance">1000</span> PC</div>
+                <button class="refill-btn" id="lobby-refill" onclick="refillLobby()">RICARICA +1000 PC</button>
             </div>
         </header>
 
-        <main class="main-content">
-            <div class="wheel-section">
-                <canvas id="wheelCanvas" width="350" height="350"></canvas>
+        <main class="games-grid">
+            <!-- Scheda Roulette -->
+            <div class="game-card" onclick="window.location.href='roulette/index.html'">
+                <div class="card-badge">LIVE 24/7</div>
+                <div class="game-icon">🎰</div>
+                <h2>ROULETTE LIVE</h2>
+                <p>37 Numeri • Tabellino Statistiche • Spin 15s</p>
+                <button class="enter-btn">ENTRA AL TAVOLO</button>
             </div>
 
-            <div class="table-section">
-                <div class="board-container">
-                    <div class="board-live">
-                        <div class="zero bet-spot" data-type="plein" data-val="0" id="cell-0">0</div>
-                        <div class="grid-numbers" id="grid"></div>
-                        <div class="column-bets">
-                            <div class="col bet-spot" data-type="col" data-val="3" id="cell-col-3">2:1</div>
-                            <div class="col bet-spot" data-type="col" data-val="2" id="cell-col-2">2:1</div>
-                            <div class="col bet-spot" data-type="col" data-val="1" id="cell-col-1">2:1</div>
-                        </div>
-                        <div class="dozen-bets">
-                            <div class="doz bet-spot" data-type="dozen" data-val="1st">1st 12</div>
-                            <div class="doz bet-spot" data-type="dozen" data-val="2nd">2nd 12</div>
-                            <div class="doz bet-spot" data-type="dozen" data-val="3rd">3rd 12</div>
-                        </div>
-                        <div class="chance-bets">
-                            <div class="chn bet-spot" data-type="range" data-val="1-18">1-18</div>
-                            <div class="chn bet-spot" data-type="even-odd" data-val="even">EVEN</div>
-                            <div class="chn bet-spot red" data-type="color" data-val="red"><div class="diamond"></div></div>
-                            <div class="chn bet-spot black" data-type="color" data-val="black"><div class="diamond"></div></div>
-                            <div class="chn bet-spot" data-type="even-odd" data-val="odd">ODD</div>
-                            <div class="chn bet-spot" data-type="range" data-val="19-36">19-36</div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Scheda Blackjack -->
+            <div class="game-card" onclick="window.location.href='blackjack/index.html'">
+                <div class="card-badge">LIVE DEALER</div>
+                <div class="game-icon">♠️</div>
+                <h2>BLACKJACK PRO</h2>
+                <p>Pagamento 3:2 • Double Down • Dealer Stand on 17</p>
+                <button class="enter-btn">ENTRA AL TAVOLO</button>
             </div>
         </main>
 
-        <footer class="bottom-bar">
-            <div class="footer-left">
-                <div class="stat-boxes">
-                    <div class="stat-box saldo">SALDO: <span id="balance">1000</span> PC</div>
-                    <div class="stat-box puntata">PUNTATA: <span id="current-total-bet">0</span> PC</div>
-                </div>
-                <button id="refill-btn" class="btn-refill" onclick="refillBalance()">+ 1000 PC</button>
-            </div>
-
-            <div class="chips-selector">
-                <div class="chip-item c1 active" data-val="1">1</div>
-                <div class="chip-item c5" data-val="5">5</div>
-                <div class="chip-item c10" data-val="10">10</div>
-                <div class="chip-item c25" data-val="25">25</div>
-                <div class="chip-item c50" data-val="50">50</div>
-                <div class="chip-item c100" data-val="100">100</div>
-            </div>
-
-            <div class="buttons-area">
-                <button class="btn-alt" onclick="manualReset()">ANNULLA</button>
-                <button class="btn-main" id="spin-btn" onclick="triggerManualSpin()">GIRA</button>
-            </div>
+        <footer class="lobby-footer">
+            <p>SpinPrave Casino Gaming Experience • Solo valuta virtuale PraveCoin (PC)</p>
         </footer>
     </div>
-    <script src="script.js"></script>
+
+    <script src="shared.js"></script>
+    <script>
+        function updateLobbyUI() {
+            const bal = getPraveBalance();
+            document.getElementById('lobby-balance').innerText = bal;
+            document.getElementById('lobby-refill').style.display = (bal <= 0) ? 'inline-block' : 'none';
+        }
+        function refillLobby() {
+            setPraveBalance(1000);
+            updateLobbyUI();
+        }
+        window.addEventListener('load', updateLobbyUI);
+        window.addEventListener('focus', updateLobbyUI);
+    </script>
 </body>
 </html>
